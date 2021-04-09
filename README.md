@@ -1,6 +1,6 @@
 # InterfaceGenerator [![NuGet Version](http://img.shields.io/nuget/v/InterfaceGenerator.svg?style=flat)](https://www.nuget.org/packages/InterfaceGenerator/)
 
-A simple source generator that creates interfaces by implementation. 
+A simple source generator that creates interfaces by implementations. 
 
 Example user implementation:
 ```cs
@@ -32,8 +32,8 @@ Supports:
  - Default arguments, `params` arguments.
  - Generic types and methods.
  - XML docs.
- - Explicit interface names (using the `Name` property on `GenerateAutoInterface`.
- - Explicit interface visibility (using the `VisibilityModifier` property on `GenerateAutoInterface`.
+ - Explicit interface names (using the `Name` property on `GenerateAutoInterface`).
+ - Explicit interface visibility (using the `VisibilityModifier` property on `GenerateAutoInterface`).
  - Explicitly excluding a member from the interface (using `[AutoInterfaceIgnore]`).
  
 Missing:

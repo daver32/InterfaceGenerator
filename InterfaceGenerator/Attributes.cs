@@ -24,7 +24,7 @@ namespace {AttributesNamespace}
 {{
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, Inherited = false)]
     [Conditional(""CodeGeneration"")]
-    public sealed class {GenerateAutoInterfaceClassname} : Attribute
+    internal sealed class {GenerateAutoInterfaceClassname} : Attribute
     {{
         public string? {VisibilityModifierPropName} {{ get; init; }} 
         public string? {InterfaceNamePropName} {{ get; init; }} 
@@ -36,7 +36,7 @@ namespace {AttributesNamespace}
 
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false)]
     [Conditional(""CodeGeneration"")]
-    public sealed class {AutoInterfaceIgnoreAttributeClassname} : Attribute
+    internal sealed class {AutoInterfaceIgnoreAttributeClassname} : Attribute
     {{
     }}
 }}

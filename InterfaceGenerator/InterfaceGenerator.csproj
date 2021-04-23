@@ -3,7 +3,7 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <LangVersion>9.0</LangVersion>
         <Nullable>enable</Nullable>
-        <PackageVersion>1.0.2</PackageVersion>
+        <PackageVersion>1.0.3</PackageVersion>
     </PropertyGroup>
     
     <PropertyGroup>
@@ -23,7 +23,7 @@
 
     <ItemGroup>
         <!-- Package the generator in the analyzer directory of the nuget package -->
-        <None Include="$(OutputPath)\$(AssemblyName).dll" Visible="false" >
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Visible="false">
             <PackagePath>analyzers/dotnet/cs</PackagePath>
             <Pack>true</Pack>
         </None>

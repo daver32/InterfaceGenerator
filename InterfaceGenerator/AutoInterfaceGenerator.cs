@@ -336,6 +336,9 @@ namespace InterfaceGenerator
                     case nameof(Decimal):
                         writer.Write(" = {0}m", param.ExplicitDefaultValue);
                         break;
+                    case nameof(Boolean):
+                        writer.Write(" = {0}", param.ExplicitDefaultValue.ToString().ToLower());
+                        break;
                     default:
                         writer.Write(" = {0}", param.ExplicitDefaultValue);
                         break;

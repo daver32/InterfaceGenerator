@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace InterfaceGenerator
+﻿namespace InterfaceGenerator
 {
     
     internal class Attributes

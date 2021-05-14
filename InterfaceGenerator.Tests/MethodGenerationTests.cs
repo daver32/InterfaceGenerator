@@ -194,7 +194,7 @@ namespace InterfaceGenerator.Tests
             method.ReturnType.Should().Be(typeof(void));
 
             var parameters = method.GetParameters();
-            parameters.Should().HaveCount(5);
+            parameters.Should().HaveCount(7);
             parameters.Select(x => x.IsOptional).Should().AllBeEquivalentTo(true);
 
             parameters[0].DefaultValue.Should().Be("cGFyYW0=");
@@ -202,6 +202,8 @@ namespace InterfaceGenerator.Tests
             parameters[2].DefaultValue.Should().Be(0.1f);
             parameters[3].DefaultValue.Should().Be(0.2d);
             parameters[4].DefaultValue.Should().Be(0.3d);
+            parameters[5].DefaultValue.Should().Be(true);
+            parameters[6].DefaultValue.Should().Be(false);
 
             _sut.VoidMethodWithOptionalParams();
         }
@@ -283,7 +285,9 @@ namespace InterfaceGenerator.Tests
             string stringConstant = StringConstant,
             float floatLiteral = 0.1f,
             double doubleLiteral = 0.2,
-            decimal decimalLiteral = 0.3m)
+            decimal decimalLiteral = 0.3m,
+            bool trueLiteral = true,
+            bool falseLiteral = false)
         {
         }
 

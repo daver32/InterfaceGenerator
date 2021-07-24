@@ -215,6 +215,11 @@ namespace InterfaceGenerator
 
         private static void GeneratePropertyDefinition(IndentedTextWriter writer, IPropertySymbol propertySymbol)
         {
+            if (propertySymbol.IsStatic)
+            {
+                return;
+            }
+            
             bool hasPublicGetter = propertySymbol.GetMethod is not null &&
                                    IsPublicOrInternal(propertySymbol.GetMethod);
             

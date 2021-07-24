@@ -233,6 +233,16 @@ namespace InterfaceGenerator.Tests
 
             method.Should().BeNull();
         }
+
+        [Fact]
+        public void StaticMethod_IsOmitted()
+        {
+            var method = typeof(IMethodsTestService)
+                         .GetMethods()
+                         .FirstOrDefault(x => x.Name == nameof(MethodsTestService.StaticMethod));
+
+            method.Should().BeNull();
+        }
     }
 
     [GenerateAutoInterface]
@@ -297,6 +307,11 @@ namespace InterfaceGenerator.Tests
 
         [AutoInterfaceIgnore]
         public void IgnoredMethod()
+        {
+            
+        }
+
+        public static void StaticMethod()
         {
             
         }

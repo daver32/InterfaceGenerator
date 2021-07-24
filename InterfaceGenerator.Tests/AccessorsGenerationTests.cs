@@ -106,6 +106,15 @@ namespace InterfaceGenerator.Tests
 
             prop.Should().BeNull();
         }
+        
+        [Fact]
+        public void StaticProperty_IsOmitted()
+        {
+            var prop = typeof(IAccessorsTestsService)
+                .GetProperty(nameof(AccessorsTestsService.StaticProperty));
+
+            prop.Should().BeNull();
+        }
     }
 
     // ReSharper disable UnusedMember.Local, ValueParameterNotUsed
@@ -130,6 +139,8 @@ namespace InterfaceGenerator.Tests
 
         [AutoInterfaceIgnore]
         public string IgnoredProperty { get; set; }
+        
+        public static string StaticProperty { get; set; }
     }
     // ReSharper enable UnusedMember.Local, ValueParameterNotUsed
 }

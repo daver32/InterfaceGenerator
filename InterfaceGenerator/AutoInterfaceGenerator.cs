@@ -254,7 +254,14 @@ namespace InterfaceGenerator
 
             if (hasPublicSetter)
             {
-                writer.Write("set; ");
+                if (propertySymbol.SetMethod!.IsInitOnly)
+                {
+                    writer.Write("init; ");
+                }
+                else
+                {
+                    writer.Write("set; ");
+                }
             }
 
             writer.WriteLine("}");

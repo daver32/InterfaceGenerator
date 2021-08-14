@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Runtime.CompilerServices;
+using FluentAssertions;
 using FluentAssertions.Common;
 using Xunit;
 
@@ -40,6 +41,22 @@ namespace InterfaceGenerator.Tests
 
             string _ = _sut.PublicProperty;
             _sut.PublicProperty = string.Empty;
+        }
+
+        [Fact]
+        public void InitProperty_IsImplemented()
+        {
+            var prop = typeof(IAccessorsTestsService)
+                .GetProperty(nameof(IAccessorsTestsService.InitOnlyProperty));
+
+            prop.Should().NotBeNull();
+
+            prop.GetMethod.Should().NotBeNull();
+            prop.SetMethod.Should().NotBeNull();
+
+            prop.SetMethod.ReturnParameter.GetRequiredCustomModifiers().Should().Contain(typeof(IsExternalInit));
+            
+            string _ = _sut.InitOnlyProperty;
         }
 
         [Fact]
@@ -128,6 +145,8 @@ namespace InterfaceGenerator.Tests
         }
         
         public string PublicProperty { get; set; }
+        
+        public string InitOnlyProperty { get; init; }
 
         public string PropertyWithPrivateSetter { get; private set; }
         

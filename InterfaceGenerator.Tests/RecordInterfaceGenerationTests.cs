@@ -42,6 +42,23 @@ namespace InterfaceGenerator.Tests
 
             _sut.RecordMethod();
         }
+
+        [Fact]  
+        public void Deconstruct_IsGenerated()
+        {
+            var method = typeof(ITestRecord).GetMethod(
+                nameof(TestRecord.Deconstruct));
+
+            method.Should().NotBeNull();
+            method.ReturnType.Should().Be(typeof(void));
+            
+            var parameters = method.GetParameters();
+            parameters.Length.Should().Be(1);
+
+            var parameter = parameters[0];
+            parameter.ParameterType.Should().Be(typeof(int).MakeByRefType());
+            parameter.IsOut.Should().BeTrue();
+        }
     }
 
     [GenerateAutoInterface]

@@ -22,8 +22,6 @@ namespace InterfaceGenerator
             IEnumerable<T> values,
             Action<TextWriter, T> writeAction)
         {
-            string.Join("", Enumerable.Empty<string>());
-
             using var enumerator = values.GetEnumerator();
 
             if (!enumerator.MoveNext())

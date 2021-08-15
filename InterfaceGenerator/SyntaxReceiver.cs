@@ -6,15 +6,21 @@ namespace InterfaceGenerator
 {
     internal class SyntaxReceiver : ISyntaxReceiver
     {
-        public IList<ClassDeclarationSyntax> CandidateClasses { get; } = new List<ClassDeclarationSyntax>();
+        public IList<TypeDeclarationSyntax> CandidateTypes { get; } = new List<TypeDeclarationSyntax>();
         
         public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
         {
-            if (syntaxNode is ClassDeclarationSyntax classDeclarationSyntax &&
-                classDeclarationSyntax.AttributeLists.Count > 0)
+            if (syntaxNode is TypeDeclarationSyntax typeDeclarationSyntax &&
+                IsClassOrRecord(typeDeclarationSyntax) &&
+                typeDeclarationSyntax.AttributeLists.Count > 0)
             {
-                CandidateClasses.Add(classDeclarationSyntax);
+                CandidateTypes.Add(typeDeclarationSyntax);
             }
+        }
+
+        private static bool IsClassOrRecord(TypeDeclarationSyntax typeDeclarationSyntax)
+        {
+            return typeDeclarationSyntax is ClassDeclarationSyntax || typeDeclarationSyntax is RecordDeclarationSyntax;
         }
     }
 }

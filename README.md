@@ -1,6 +1,6 @@
 # InterfaceGenerator [![NuGet Version](http://img.shields.io/nuget/v/InterfaceGenerator.svg?style=flat)](https://www.nuget.org/packages/InterfaceGenerator/)
 
-A simple source generator that creates interfaces by implementations. 
+A simple source generator that creates interfaces by implementations. Useful for when you need an interface purely for the sake of mocking.
 
 Example user implementation:
 ```cs

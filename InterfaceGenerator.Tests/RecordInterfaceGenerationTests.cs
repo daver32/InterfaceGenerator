@@ -17,13 +17,13 @@ namespace InterfaceGenerator.Tests
         public void RecordProperty_IsGenerated()
         {
             var prop = typeof(ITestRecord)
-                .GetProperty(nameof(TestRecord.RecordProperty));
+                .GetProperty(nameof(TestRecord.RecordProperty))!;
 
             prop.Should().NotBeNull();
 
             prop.GetMethod.Should().NotBeNull();
             prop.SetMethod.Should().NotBeNull();
-            prop.SetMethod.ReturnParameter.GetRequiredCustomModifiers().Should().Contain(typeof(IsExternalInit));
+            prop.SetMethod!.ReturnParameter!.GetRequiredCustomModifiers().Should().Contain(typeof(IsExternalInit));
 
             _sut.RecordProperty.Should().Be(420);
         }
@@ -35,7 +35,7 @@ namespace InterfaceGenerator.Tests
                 nameof(TestRecord.RecordMethod));
 
             method.Should().NotBeNull();
-            method.ReturnType.Should().Be(typeof(void));
+            method!.ReturnType.Should().Be(typeof(void));
 
             var parameters = method.GetParameters();
             parameters.Should().BeEmpty();
@@ -50,7 +50,7 @@ namespace InterfaceGenerator.Tests
                 nameof(TestRecord.Deconstruct));
 
             method.Should().NotBeNull();
-            method.ReturnType.Should().Be(typeof(void));
+            method!.ReturnType.Should().Be(typeof(void));
             
             var parameters = method.GetParameters();
             parameters.Length.Should().Be(1);

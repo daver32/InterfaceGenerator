@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
 namespace InterfaceGenerator
@@ -47,7 +46,9 @@ namespace InterfaceGenerator
         private void GenerateInterfaces(GeneratorExecutionContext context)
         {
             if (context.SyntaxReceiver is not SyntaxReceiver receiver)
+            {
                 return;
+            }
 
             var compilation = GetCompilation(context);
             InitAttributes(compilation);
@@ -67,50 +68,41 @@ namespace InterfaceGenerator
             }
         }
 
-        private string GetVisibilityModifier(INamedTypeSymbol implTypeSymbol, AttributeData attributeData)
+        private static string InferVisibilityModifier(ISymbol implTypeSymbol, AttributeData attributeData)
         {
-            var pair = attributeData.NamedArguments.FirstOrDefault(x => x.Key == Attributes.VisibilityModifierPropName);
-            string? result = pair.Value.Value?.ToString();
-
+            string? result = attributeData.GetNamedParamValue(Attributes.VisibilityModifierPropName);
             if (!string.IsNullOrEmpty(result))
             {
-                return result;
+                return result!;
             }
 
             return implTypeSymbol.DeclaredAccessibility switch
             {
                 Accessibility.Public => "public",
-                var _                => "internal",
+                _                    => "internal",
             };
         }
 
-        private string GetInterfaceName(INamedTypeSymbol implTypeSymbol, AttributeData attributeData)
+        private static string InferInterfaceName(ISymbol implTypeSymbol, AttributeData attributeData)
         {
-            var pair = attributeData.NamedArguments.FirstOrDefault(x => x.Key == Attributes.InterfaceNamePropName);
-            string? result = pair.Value.Value?.ToString();
-
-            if (!string.IsNullOrEmpty(result))
-            {
-                return result;
-            }
-            
-            return "I" + implTypeSymbol.Name;
+            return attributeData.GetNamedParamValue(Attributes.InterfaceNamePropName) ?? $"I{implTypeSymbol.Name}";
         }
 
         private string GenerateInterfaceCode(INamedTypeSymbol implTypeSymbol, AttributeData attributeData)
         {
             using var stream = new MemoryStream();
             var streamWriter = new StreamWriter(stream, Encoding.UTF8);
-            var codeWriter = new IndentedTextWriter(streamWriter, GeneratorConsts.Indent);
+            var codeWriter = new IndentedTextWriter(streamWriter, "    ");
 
             var namespaceName = implTypeSymbol.ContainingNamespace.ToDisplayString();
-            var interfaceName = GetInterfaceName(implTypeSymbol, attributeData);
-            var visibilityModifier = GetVisibilityModifier(implTypeSymbol, attributeData);
+            var interfaceName = InferInterfaceName(implTypeSymbol, attributeData);
+            var visibilityModifier = InferVisibilityModifier(implTypeSymbol, attributeData);
 
             codeWriter.WriteLine("namespace {0}", namespaceName);
             codeWriter.WriteLine("{");
 
             ++codeWriter.Indent;
+            WriteSymbolDocsIfPresent(codeWriter, implTypeSymbol);
             codeWriter.Write("{0} partial interface {1}", visibilityModifier, interfaceName);
             WriteTypeGenericsIfNeeded(codeWriter, implTypeSymbol);
             codeWriter.WriteLine();
@@ -131,7 +123,7 @@ namespace InterfaceGenerator
             return reader.ReadToEnd();
         }
 
-        private void WriteTypeGenericsIfNeeded(IndentedTextWriter writer, INamedTypeSymbol implTypeSymbol)
+        private static void WriteTypeGenericsIfNeeded(TextWriter writer, INamedTypeSymbol implTypeSymbol)
         {
             if (!implTypeSymbol.IsGenericType)
             {
@@ -145,16 +137,12 @@ namespace InterfaceGenerator
             WriteTypeParameterConstraints(writer, implTypeSymbol.TypeParameters);
         }
 
-        private void GenerateInterfaceMemberDefinitions(IndentedTextWriter writer, INamedTypeSymbol implTypeSymbol)
+        private void GenerateInterfaceMemberDefinitions(TextWriter writer, INamespaceOrTypeSymbol implTypeSymbol)
         {
             foreach (var member in implTypeSymbol.GetMembers())
             {
-                if (member.DeclaredAccessibility != Accessibility.Public)
-                {
-                    continue;
-                }
-
-                if (member.HasAttribute(_ignoreAttribute))
+                if (member.DeclaredAccessibility != Accessibility.Public || 
+                    member.HasAttribute(_ignoreAttribute))
                 {
                     continue;
                 }
@@ -163,7 +151,7 @@ namespace InterfaceGenerator
             }
         }
 
-        private static void GenerateInterfaceMemberDefinition(IndentedTextWriter writer, ISymbol member)
+        private static void GenerateInterfaceMemberDefinition(TextWriter writer, ISymbol member)
         {
             switch (member)
             {
@@ -176,9 +164,9 @@ namespace InterfaceGenerator
             }
         }
 
-        private static void WriteMemberDocs(IndentedTextWriter writer, ISymbol member)
+        private static void WriteSymbolDocsIfPresent(TextWriter writer, ISymbol symbol)
         {
-            var xml = member.GetDocumentationCommentXml();
+            var xml = symbol.GetDocumentationCommentXml();
             if (string.IsNullOrWhiteSpace(xml))
             {
                 return;
@@ -202,18 +190,17 @@ namespace InterfaceGenerator
 
             for (int i = 1; i < lines.Count - 1; i++)
             {
-                var line = lines[i];
+                var line = lines[i].TrimStart(); // for some reason, 4 spaces are inserted to the beginning of the line
                 writer.WriteLine("/// {0}", line);
             }
         }
 
-        private static bool IsPublicOrInternal(IMethodSymbol methodSymbol)
+        private static bool IsPublicOrInternal(ISymbol symbol)
         {
-            return methodSymbol.DeclaredAccessibility == Accessibility.Public ||
-                   methodSymbol.DeclaredAccessibility == Accessibility.Internal;
+            return symbol.DeclaredAccessibility is Accessibility.Public or Accessibility.Internal;
         }
 
-        private static void GeneratePropertyDefinition(IndentedTextWriter writer, IPropertySymbol propertySymbol)
+        private static void GeneratePropertyDefinition(TextWriter writer, IPropertySymbol propertySymbol)
         {
             if (propertySymbol.IsStatic)
             {
@@ -231,7 +218,7 @@ namespace InterfaceGenerator
                 return;
             }
 
-            WriteMemberDocs(writer, propertySymbol);
+            WriteSymbolDocsIfPresent(writer, propertySymbol);
             
             if (propertySymbol.IsIndexer)
             {
@@ -266,7 +253,7 @@ namespace InterfaceGenerator
             writer.WriteLine("}");
         }
 
-        private static void GenerateMethodDefinition(IndentedTextWriter writer, IMethodSymbol methodSymbol)
+        private static void GenerateMethodDefinition(TextWriter writer, IMethodSymbol methodSymbol)
         {
             if (methodSymbol.MethodKind != MethodKind.Ordinary || methodSymbol.IsStatic)
             {
@@ -280,7 +267,7 @@ namespace InterfaceGenerator
                 return;
             }
             
-            WriteMemberDocs(writer, methodSymbol);
+            WriteSymbolDocsIfPresent(writer, methodSymbol);
 
             writer.Write("{0} {1}", methodSymbol.ReturnType, methodSymbol.Name); // ex. int Foo
 
@@ -323,8 +310,16 @@ namespace InterfaceGenerator
                     writer.Write("in ");
                     break;
             }
+            
+            writer.Write(param.Type);
+            writer.Write(" ");
 
-            writer.Write("{0} {1}", param.Type, param.Name);
+            if (StringExtensions.IsCSharpKeyword(param.Name))
+            {
+                writer.Write("@");
+            }
+            
+            writer.Write(param.Name);
 
             if (param.HasExplicitDefaultValue)
             {
@@ -365,7 +360,7 @@ namespace InterfaceGenerator
         }
 
         private static void WriteTypeParameterConstraints(
-            IndentedTextWriter writer,
+            TextWriter writer,
             IEnumerable<ITypeParameterSymbol> typeParameters)
         {
             foreach (var typeParameter in typeParameters)
@@ -395,10 +390,10 @@ namespace InterfaceGenerator
             return receiver.CandidateTypes.Select(candidate => GetTypeSymbol(compilation, candidate));
         }
 
-        private static INamedTypeSymbol GetTypeSymbol(Compilation compilation, TypeDeclarationSyntax type)
+        private static INamedTypeSymbol GetTypeSymbol(Compilation compilation, SyntaxNode type)
         {
             var model = compilation.GetSemanticModel(type.SyntaxTree);
-            var typeSymbol = ModelExtensions.GetDeclaredSymbol(model, type)!;
+            var typeSymbol = model.GetDeclaredSymbol(type)!;
             return (INamedTypeSymbol)typeSymbol;
         }
 

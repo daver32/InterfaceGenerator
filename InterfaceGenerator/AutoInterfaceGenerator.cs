@@ -111,6 +111,7 @@ namespace InterfaceGenerator
             codeWriter.WriteLine("{");
 
             ++codeWriter.Indent;
+            WriteSymbolDocsIfPresent(codeWriter, implTypeSymbol);
             codeWriter.Write("{0} partial interface {1}", visibilityModifier, interfaceName);
             WriteTypeGenericsIfNeeded(codeWriter, implTypeSymbol);
             codeWriter.WriteLine();
@@ -176,9 +177,9 @@ namespace InterfaceGenerator
             }
         }
 
-        private static void WriteMemberDocs(IndentedTextWriter writer, ISymbol member)
+        private static void WriteSymbolDocsIfPresent(IndentedTextWriter writer, ISymbol symbol)
         {
-            var xml = member.GetDocumentationCommentXml();
+            var xml = symbol.GetDocumentationCommentXml();
             if (string.IsNullOrWhiteSpace(xml))
             {
                 return;
@@ -202,7 +203,7 @@ namespace InterfaceGenerator
 
             for (int i = 1; i < lines.Count - 1; i++)
             {
-                var line = lines[i];
+                var line = lines[i].TrimStart(); // for some reason, 4 spaces are inserted to the beginning of the line
                 writer.WriteLine("/// {0}", line);
             }
         }
@@ -231,7 +232,7 @@ namespace InterfaceGenerator
                 return;
             }
 
-            WriteMemberDocs(writer, propertySymbol);
+            WriteSymbolDocsIfPresent(writer, propertySymbol);
             
             if (propertySymbol.IsIndexer)
             {
@@ -280,7 +281,7 @@ namespace InterfaceGenerator
                 return;
             }
             
-            WriteMemberDocs(writer, methodSymbol);
+            WriteSymbolDocsIfPresent(writer, methodSymbol);
 
             writer.Write("{0} {1}", methodSymbol.ReturnType, methodSymbol.Name); // ex. int Foo
 

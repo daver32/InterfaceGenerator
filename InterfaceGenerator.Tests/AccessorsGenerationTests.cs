@@ -32,7 +32,7 @@ namespace InterfaceGenerator.Tests
         public void PublicProperty_IsImplemented()
         {
             var prop = typeof(IAccessorsTestsService)
-                .GetProperty(nameof(IAccessorsTestsService.PublicProperty));
+                .GetProperty(nameof(IAccessorsTestsService.PublicProperty))!;
 
             prop.Should().NotBeNull();
 
@@ -47,14 +47,14 @@ namespace InterfaceGenerator.Tests
         public void InitProperty_IsImplemented()
         {
             var prop = typeof(IAccessorsTestsService)
-                .GetProperty(nameof(IAccessorsTestsService.InitOnlyProperty));
+                .GetProperty(nameof(IAccessorsTestsService.InitOnlyProperty))!;
 
             prop.Should().NotBeNull();
 
             prop.GetMethod.Should().NotBeNull();
             prop.SetMethod.Should().NotBeNull();
 
-            prop.SetMethod.ReturnParameter.GetRequiredCustomModifiers().Should().Contain(typeof(IsExternalInit));
+            prop.SetMethod!.ReturnParameter!.GetRequiredCustomModifiers().Should().Contain(typeof(IsExternalInit));
             
             string _ = _sut.InitOnlyProperty;
         }
@@ -63,7 +63,7 @@ namespace InterfaceGenerator.Tests
         public void PrivateSetter_IsOmitted()
         {
             var prop = typeof(IAccessorsTestsService)
-                .GetProperty(nameof(IAccessorsTestsService.PropertyWithPrivateSetter));
+                .GetProperty(nameof(IAccessorsTestsService.PropertyWithPrivateSetter))!;
 
             prop.Should().NotBeNull();
 
@@ -77,7 +77,7 @@ namespace InterfaceGenerator.Tests
         public void PrivateGetter_IsOmitted()
         {
             var prop = typeof(IAccessorsTestsService)
-                .GetProperty(nameof(IAccessorsTestsService.PropertyWithPrivateGetter));
+                .GetProperty(nameof(IAccessorsTestsService.PropertyWithPrivateGetter))!;
 
             prop.Should().NotBeNull();
 
@@ -91,7 +91,7 @@ namespace InterfaceGenerator.Tests
         public void ProtectedSetter_IsOmitted()
         {
             var prop = typeof(IAccessorsTestsService)
-                .GetProperty(nameof(IAccessorsTestsService.PropertyWithProtectedSetter));
+                .GetProperty(nameof(IAccessorsTestsService.PropertyWithProtectedSetter))!;
 
             prop.Should().NotBeNull();
 
@@ -105,7 +105,7 @@ namespace InterfaceGenerator.Tests
         public void ProtectedGetter_IsOmitted()
         {
             var prop = typeof(IAccessorsTestsService)
-                .GetProperty(nameof(IAccessorsTestsService.PropertyWithProtectedGetter));
+                .GetProperty(nameof(IAccessorsTestsService.PropertyWithProtectedGetter))!;
 
             prop.Should().NotBeNull();
 

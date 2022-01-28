@@ -20,7 +20,7 @@ namespace InterfaceGenerator.Tests
         public void VoidMethod_IsImplemented()
         {
             var method = typeof(IMethodsTestService).GetMethod(
-                nameof(MethodsTestService.VoidMethod));
+                nameof(MethodsTestService.VoidMethod))!;
 
             method.Should().NotBeNull();
             method.ReturnType.Should().Be(typeof(void));
@@ -35,7 +35,7 @@ namespace InterfaceGenerator.Tests
         public void VoidMethodWithKeywordParam_IsImplemented()
         {
             var method = typeof(IMethodsTestService).GetMethod(
-                nameof(MethodsTestService.VoidMethodWithKeywordParam));
+                nameof(MethodsTestService.VoidMethodWithKeywordParam))!;
             
             method.Should().NotBeNull();
             method.ReturnType.Should().Be(typeof(void));
@@ -54,7 +54,7 @@ namespace InterfaceGenerator.Tests
         {
             var method = typeof(IMethodsTestService).GetMethod(
                 nameof(MethodsTestService.VoidMethodWithParams),
-                new[] { typeof(string), typeof(string) });
+                new[] { typeof(string), typeof(string) })!;
 
             method.Should().NotBeNull();
             method.ReturnType.Should().Be(typeof(void));
@@ -71,7 +71,7 @@ namespace InterfaceGenerator.Tests
         {
             var method = typeof(IMethodsTestService).GetMethod(
                 nameof(MethodsTestService.VoidMethodWithOutParam),
-                new[] { typeof(string).MakeByRefType() });
+                new[] { typeof(string).MakeByRefType() })!;
 
             method.Should().NotBeNull();
             method.ReturnType.Should().Be(typeof(void));
@@ -89,7 +89,7 @@ namespace InterfaceGenerator.Tests
         {
             var method = typeof(IMethodsTestService).GetMethod(
                 nameof(MethodsTestService.VoidMethodWithInParam),
-                new[] { typeof(string).MakeByRefType() });
+                new[] { typeof(string).MakeByRefType() })!;
 
             method.Should().NotBeNull();
             method.ReturnType.Should().Be(typeof(void));
@@ -108,7 +108,7 @@ namespace InterfaceGenerator.Tests
         {
             var method = typeof(IMethodsTestService).GetMethod(
                 nameof(MethodsTestService.VoidMethodWithRefParam),
-                new[] { typeof(string).MakeByRefType() });
+                new[] { typeof(string).MakeByRefType() })!;
 
             method.Should().NotBeNull();
             method.ReturnType.Should().Be(typeof(void));
@@ -127,7 +127,7 @@ namespace InterfaceGenerator.Tests
         public void StringMethod_IsImplemented()
         {
             var method = typeof(IMethodsTestService).GetMethod(
-                nameof(MethodsTestService.StringMethod));
+                nameof(MethodsTestService.StringMethod))!;
 
             method.Should().NotBeNull();
             method.ReturnType.Should().Be(typeof(string));
@@ -143,7 +143,7 @@ namespace InterfaceGenerator.Tests
         {
             var method = typeof(IMethodsTestService)
                          .GetMethods()
-                         .FirstOrDefault(x => x.Name == nameof(MethodsTestService.GenericVoidMethod));
+                         .First(x => x.Name == nameof(MethodsTestService.GenericVoidMethod));
 
             method.Should().NotBeNull();
             method.ReturnType.Should().Be(typeof(void));
@@ -161,7 +161,7 @@ namespace InterfaceGenerator.Tests
         {
             var method = typeof(IMethodsTestService)
                          .GetMethods()
-                         .FirstOrDefault(x => x.Name == nameof(MethodsTestService.GenericVoidMethodWithGenericParam));
+                         .First(x => x.Name == nameof(MethodsTestService.GenericVoidMethodWithGenericParam));
 
             method.Should().NotBeNull();
             method.ReturnType.Should().Be(typeof(void));
@@ -181,7 +181,7 @@ namespace InterfaceGenerator.Tests
         {
             var method = typeof(IMethodsTestService)
                          .GetMethods()
-                         .FirstOrDefault(x => x.Name == nameof(MethodsTestService.GenericVoidMethodWithConstraints));
+                         .First(x => x.Name == nameof(MethodsTestService.GenericVoidMethodWithConstraints));
 
             method.Should().NotBeNull();
             method.ReturnType.Should().Be(typeof(void));
@@ -206,7 +206,7 @@ namespace InterfaceGenerator.Tests
         {
             var method = typeof(IMethodsTestService)
                          .GetMethods()
-                         .FirstOrDefault(x => x.Name == nameof(MethodsTestService.VoidMethodWithOptionalParams));
+                         .First(x => x.Name == nameof(MethodsTestService.VoidMethodWithOptionalParams));
 
             method.Should().NotBeNull();
             method.ReturnType.Should().Be(typeof(void));
@@ -231,9 +231,8 @@ namespace InterfaceGenerator.Tests
         {
             var method = typeof(IMethodsTestService)
                          .GetMethods()
-                         .FirstOrDefault(x => x.Name == nameof(MethodsTestService.VoidMethodWithExpandingParam));
+                         .First(x => x.Name == nameof(MethodsTestService.VoidMethodWithExpandingParam));
 
-            method.Should().NotBeNull();
             method.ReturnType.Should().Be(typeof(void));
 
             var parameters = method.GetParameters();

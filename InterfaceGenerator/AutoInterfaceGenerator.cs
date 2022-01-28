@@ -323,8 +323,16 @@ namespace InterfaceGenerator
                     writer.Write("in ");
                     break;
             }
+            
+            writer.Write(param.Type);
+            writer.Write(" ");
 
-            writer.Write("{0} {1}", param.Type, param.Name);
+            if (StringExtensions.IsCSharpKeyword(param.Name))
+            {
+                writer.Write("@");
+            }
+            
+            writer.Write(param.Name);
 
             if (param.HasExplicitDefaultValue)
             {

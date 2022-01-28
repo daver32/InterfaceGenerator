@@ -32,6 +32,24 @@ namespace InterfaceGenerator.Tests
         }
 
         [Fact]
+        public void VoidMethodWithKeywordParam_IsImplemented()
+        {
+            var method = typeof(IMethodsTestService).GetMethod(
+                nameof(MethodsTestService.VoidMethodWithKeywordParam));
+            
+            method.Should().NotBeNull();
+            method.ReturnType.Should().Be(typeof(void));
+            
+            var parameters = method.GetParameters();
+            parameters.Select(x => x.ParameterType).Should().AllBeEquivalentTo(typeof(string));
+            parameters.Should().HaveCount(1);
+
+            parameters[0].Name.Should().Be("void");
+            
+            _sut.VoidMethodWithKeywordParam("");
+        }
+
+        [Fact]
         public void VoidMethodWithParams_IsImplemented()
         {
             var method = typeof(IMethodsTestService).GetMethod(
@@ -255,6 +273,10 @@ namespace InterfaceGenerator.Tests
         }
 
         public void VoidMethodWithParams(string a, string b)
+        {
+        }
+        
+        public void VoidMethodWithKeywordParam(string @void)
         {
         }
 

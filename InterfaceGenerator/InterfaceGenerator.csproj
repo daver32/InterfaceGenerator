@@ -3,7 +3,7 @@
         <TargetFramework>netstandard2</TargetFramework>
         <LangVersion>9.0</LangVersion>
         <Nullable>enable</Nullable>
-        <PackageVersion>1.0.9</PackageVersion>
+        <PackageVersion>1.0.10</PackageVersion>
 
 		<developmentDependency>true</developmentDependency>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>

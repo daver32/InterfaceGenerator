@@ -2,56 +2,55 @@
 using FluentAssertions;
 using Xunit;
 
-namespace InterfaceGenerator.Tests
+namespace InterfaceGenerator.Tests;
+
+public class VisibilityModifierTests
 {
-    public class VisibilityModifierTests
+    [Fact]
+    public void IExplicitlyPublicService_IsPublic()
     {
-        [Fact]
-        public void IExplicitlyPublicService_IsPublic()
-        {
-            var type = typeof(IExplicitlyPublicService);
-            type.Attributes.Should().HaveFlag(TypeAttributes.Public);
-        }
-        
-        [Fact]
-        public void IExplicitlyInternalService_IsInternal()
-        {
-            var type = typeof(IExplicitlyInternalService);
-            type.Attributes.Should().HaveFlag(TypeAttributes.NotPublic);
-        }
-
-        [Fact]
-        public void IImplicitlyPublicService_IsPublic()
-        {
-            var type = typeof(IImplicitlyPublicService);
-            type.Attributes.Should().HaveFlag(TypeAttributes.Public);
-        }
-        
-        [Fact]
-        public void IImplicitlyInternalService_IsInternal()
-        {
-            var type = typeof(IImplicitlyInternalService);
-            type.Attributes.Should().HaveFlag(TypeAttributes.NotPublic);
-        }
+        var type = typeof(IExplicitlyPublicService);
+        type.Attributes.Should().HaveFlag(TypeAttributes.Public);
     }
 
-    [GenerateAutoInterface(VisibilityModifier = "public")]
-    internal class ExplicitlyPublicService : IExplicitlyPublicService
+    [Fact]
+    public void IExplicitlyInternalService_IsInternal()
     {
+        var type = typeof(IExplicitlyInternalService);
+        type.Attributes.Should().HaveFlag(TypeAttributes.NotPublic);
     }
-    
-    [GenerateAutoInterface(VisibilityModifier = "internal")]
-    public class ExplicitlyInternalService : IExplicitlyInternalService
+
+    [Fact]
+    public void IImplicitlyPublicService_IsPublic()
     {
+        var type = typeof(IImplicitlyPublicService);
+        type.Attributes.Should().HaveFlag(TypeAttributes.Public);
     }
-    
-    [GenerateAutoInterface]
-    public class ImplicitlyPublicService : IImplicitlyPublicService
+
+    [Fact]
+    public void IImplicitlyInternalService_IsInternal()
     {
+        var type = typeof(IImplicitlyInternalService);
+        type.Attributes.Should().HaveFlag(TypeAttributes.NotPublic);
     }
-    
-    [GenerateAutoInterface]
-    internal class ImplicitlyInternalService : IImplicitlyInternalService
-    {
-    }
+}
+
+[GenerateAutoInterface(VisibilityModifier = "public")]
+internal class ExplicitlyPublicService : IExplicitlyPublicService
+{
+}
+
+[GenerateAutoInterface(VisibilityModifier = "internal")]
+public class ExplicitlyInternalService : IExplicitlyInternalService
+{
+}
+
+[GenerateAutoInterface]
+public class ImplicitlyPublicService : IImplicitlyPublicService
+{
+}
+
+[GenerateAutoInterface]
+internal class ImplicitlyInternalService : IImplicitlyInternalService
+{
 }

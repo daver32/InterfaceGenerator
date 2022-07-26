@@ -25,6 +25,34 @@ namespace InterfaceGenerator
 
         public void Execute(GeneratorExecutionContext context)
         {
+            try
+            {
+                ExecuteCore(context);
+            }
+            catch (Exception exception)
+            {
+                RaiseExceptionDiagnostic(context, exception);
+            }
+        }
+
+        private static void RaiseExceptionDiagnostic(GeneratorExecutionContext context, Exception exception)
+        {
+            var descriptor = new DiagnosticDescriptor(
+                "InterfaceGenerator.CriticalError",
+                "Exception thrown in InterfaceGenerator",
+                $"{exception.Message} {exception.StackTrace}",
+                "InterfaceGenerator",
+                DiagnosticSeverity.Error,
+                true,
+                customTags: WellKnownDiagnosticTags.AnalyzerException);
+
+            var diagnostic = Diagnostic.Create(descriptor, null);
+            
+            context.ReportDiagnostic(diagnostic);
+        }
+        
+        private void ExecuteCore(GeneratorExecutionContext context)
+        {
             // setting the culture to invariant prevents errors such as emitting a decimal comma (0,1) instead of
             // a decimal point (0.1) in certain cultures
             var prevCulture = Thread.CurrentThread.CurrentCulture;

@@ -39,8 +39,8 @@ namespace InterfaceGenerator
         {
             var descriptor = new DiagnosticDescriptor(
                 "InterfaceGenerator.CriticalError",
-                "Exception thrown in InterfaceGenerator",
-                $"{exception.Message} {exception.StackTrace}",
+                $"Exception thrown in InterfaceGenerator",
+                $"{exception.GetType().FullName} {exception.Message} {exception.StackTrace.Trim()}",
                 "InterfaceGenerator",
                 DiagnosticSeverity.Error,
                 true,

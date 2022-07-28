@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -21,6 +22,14 @@ namespace InterfaceGenerator
         public void Initialize(GeneratorInitializationContext context)
         {
             context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());
+
+            #if DEBUG
+            if (!Debugger.IsAttached)
+            {
+                // sadly this is Windows only so as of now :(
+                Debugger.Launch();
+            }
+            #endif
         }
 
         public void Execute(GeneratorExecutionContext context)
@@ -83,6 +92,8 @@ namespace InterfaceGenerator
 
             var classSymbols = GetImplTypeSymbols(compilation, receiver);
 
+            List<string> classSymbolNames = new List<string>();
+
             foreach (var implTypeSymbol in classSymbols)
             {
                 if (!implTypeSymbol.TryGetAttribute(_generateAutoInterfaceAttribute, out var attributes))
@@ -90,9 +101,17 @@ namespace InterfaceGenerator
                     continue;
                 }
 
+                if(classSymbolNames.Contains(implTypeSymbol.GetFullMetadataName(useNameWhenNotFound: true)))
+                {
+                    continue; // partial class, already added
+                }
+
+                classSymbolNames.Add(implTypeSymbol.GetFullMetadataName(useNameWhenNotFound: true));
+
                 var attribute = attributes.Single(); 
                 var source = SourceText.From(GenerateInterfaceCode(implTypeSymbol, attribute), Encoding.UTF8);
-                context.AddSource($"{implTypeSymbol.Name}_AutoInterface.cs", source);
+
+                context.AddSource($"{implTypeSymbol.GetFullMetadataName(useNameWhenNotFound: true)}_AutoInterface.cs", source);
             }
         }
 

@@ -24,46 +24,45 @@ namespace InterfaceGenerator
         }
 
         //Ref: https://stackoverflow.com/questions/27105909/get-fully-qualified-metadata-name-in-roslyn
-        public static string GetFullMetadataName(this ISymbol s, bool useNameWhenNotFound = false)
+        public static string GetFullMetadataName(this ISymbol symbol, bool useNameWhenNotFound = false)
         {
-            if (s == null || IsRootNamespace(s))
+            if (IsRootNamespace(symbol))
             {
-                if (useNameWhenNotFound)
-                {
-                    return s.Name;
-                }
-                return string.Empty;
+                return useNameWhenNotFound ? symbol.Name : string.Empty;
             }
 
-            var sb = new StringBuilder(s.MetadataName);
-            var last = s;
+            var stringBuilder = new StringBuilder(symbol.MetadataName);
+            var last = symbol;
 
-            s = s.ContainingSymbol;
+            symbol = symbol.ContainingSymbol;
 
-            while (!IsRootNamespace(s))
+            while (!IsRootNamespace(symbol))
             {
-                if (s is ITypeSymbol && last is ITypeSymbol)
+                if (symbol is ITypeSymbol && last is ITypeSymbol)
                 {
-                    sb.Insert(0, '+');
+                    stringBuilder.Insert(0, '+');
                 }
                 else
                 {
-                    sb.Insert(0, '.');
+                    stringBuilder.Insert(0, '.');
                 }
 
-                sb.Insert(0, s.OriginalDefinition.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
-                //sb.Insert(0, s.MetadataName);
-                s = s.ContainingSymbol;
+                stringBuilder.Insert(0, symbol.OriginalDefinition.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat));
+                symbol = symbol.ContainingSymbol;
             }
 
-            var retval = sb.ToString();
-            return string.IsNullOrEmpty(retval) && useNameWhenNotFound ? s.Name : retval;
+            var retVal = stringBuilder.ToString();
+            if (string.IsNullOrWhiteSpace(retVal) && useNameWhenNotFound)
+            {
+                return symbol.Name;
+            }
+
+            return retVal;
         }
 
         private static bool IsRootNamespace(ISymbol symbol)
         {
-            INamespaceSymbol s = null;
-            return ((s = symbol as INamespaceSymbol) != null) && s.IsGlobalNamespace;
+            return symbol is INamespaceSymbol { IsGlobalNamespace: true };
         }
     }
 }

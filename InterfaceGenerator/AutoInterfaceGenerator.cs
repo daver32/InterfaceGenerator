@@ -23,12 +23,13 @@ namespace InterfaceGenerator
         {
             context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());
 
-#if DEBUG
+            #if DEBUG
             if (!Debugger.IsAttached)
             {
+                // sadly this is Windows only so as of now :(
                 Debugger.Launch();
             }
-#endif
+            #endif
         }
 
         public void Execute(GeneratorExecutionContext context)

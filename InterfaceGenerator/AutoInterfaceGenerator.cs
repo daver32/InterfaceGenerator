@@ -399,6 +399,9 @@ namespace InterfaceGenerator
                     case nameof(Boolean):
                         writer.Write(" = {0}", param.ExplicitDefaultValue.ToString().ToLower());
                         break;
+                    case nameof(Nullable<bool>):
+                        writer.Write(" = {0}", param.ExplicitDefaultValue.ToString().ToLower());
+                        break;
                     default:
                         writer.Write(" = {0}", param.ExplicitDefaultValue);
                         break;

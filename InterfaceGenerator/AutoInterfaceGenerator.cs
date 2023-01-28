@@ -111,7 +111,7 @@ namespace InterfaceGenerator
                 var attribute = attributes.Single(); 
                 var source = SourceText.From(GenerateInterfaceCode(implTypeSymbol, attribute), Encoding.UTF8);
 
-                context.AddSource($"{implTypeSymbol.GetFullMetadataName(useNameWhenNotFound: true)}_AutoInterface.cs", source);
+                context.AddSource($"{implTypeSymbol.GetFullMetadataName(useNameWhenNotFound: true)}_AutoInterface.g.cs", source);
             }
         }
 

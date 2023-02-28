@@ -146,7 +146,10 @@ namespace InterfaceGenerator
             var visibilityModifier = InferVisibilityModifier(implTypeSymbol, attributeData);
 
             //https://stackoverflow.com/questions/55492214/the-annotation-for-nullable-reference-types-should-only-be-used-in-code-within-a fix for nullable
-            codeWriter.WriteLine("#nullable enable");
+            if (implTypeSymbol.NullableAnnotation == NullableAnnotation.Annotated)
+            {
+                codeWriter.WriteLine("#nullable enable");
+            }
             codeWriter.WriteLine("namespace {0}", namespaceName);
             codeWriter.WriteLine("{");
 
@@ -165,7 +168,10 @@ namespace InterfaceGenerator
             --codeWriter.Indent;
 
             codeWriter.WriteLine("}");
-            codeWriter.WriteLine("#nullable restore");
+            if (implTypeSymbol.NullableAnnotation == NullableAnnotation.Annotated)
+            {
+                codeWriter.WriteLine("#nullable restore");
+            }
 
             codeWriter.Flush();
             stream.Seek(0, SeekOrigin.Begin);

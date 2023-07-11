@@ -203,6 +203,34 @@ public class MethodGenerationTests
     }
 
     [Fact]
+    public void GenericVoidMethodWithValueTypeConstraints_IsImplemented()
+    {
+        var method = typeof(IMethodsTestService)
+                     .GetMethods()
+                     .First(x => x.Name == nameof(MethodsTestService.GenericVoidMethodWithValueTypeConstraints));
+
+        method.Should().NotBeNull();
+        method.ReturnType.Should().Be(typeof(void));
+
+        var genericArgs = method.GetGenericArguments();
+        genericArgs.Should().HaveCount(2);
+
+        genericArgs[0].IsValueType.Should().BeTrue();
+        genericArgs[0]
+            .GenericParameterAttributes.Should()
+            .HaveFlag(GenericParameterAttributes.DefaultConstructorConstraint)
+            .And.HaveFlag(GenericParameterAttributes.NotNullableValueTypeConstraint);
+
+        genericArgs[1].IsValueType.Should().BeTrue();
+        genericArgs[1]
+            .GenericParameterAttributes.Should()
+            .HaveFlag(GenericParameterAttributes.DefaultConstructorConstraint)
+            .And.HaveFlag(GenericParameterAttributes.NotNullableValueTypeConstraint);
+
+        _sut.GenericVoidMethodWithValueTypeConstraints<ValueTuple<int>, long>();
+    }
+
+    [Fact]
     public void VoidMethodWithOptionalParams_IsImplemented()
     {
         var method = typeof(IMethodsTestService)
@@ -312,6 +340,12 @@ internal class MethodsTestService : IMethodsTestService
     public void GenericVoidMethodWithConstraints<TX, TY>()
         where TX : class
         where TY : class, TX, new()
+    {
+    }
+
+    public void GenericVoidMethodWithValueTypeConstraints<TX, TY>()
+        where TX : struct
+        where TY : unmanaged
     {
     }
 

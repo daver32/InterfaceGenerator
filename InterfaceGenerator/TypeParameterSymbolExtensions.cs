@@ -7,23 +7,21 @@ namespace InterfaceGenerator
     {
         public static IEnumerable<string> EnumGenericConstraints(this ITypeParameterSymbol symbol)
         {
-            // the class/struct/unmanaged/notnull constraint has to be the last
+            // the class/struct/unmanaged/notnull constraint has to be the first
+            // and cannot be combined with one another
             if (symbol.HasNotNullConstraint)
             {
                 yield return "notnull";
             }
-            
-            if (symbol.HasValueTypeConstraint)
-            {
-                yield return "struct";
-            }
-            
-            if (symbol.HasUnmanagedTypeConstraint)
+            else if (symbol.HasUnmanagedTypeConstraint)
             {
                 yield return "unmanaged";
             }
-            
-            if (symbol.HasReferenceTypeConstraint)
+            else if (symbol.HasValueTypeConstraint)
+            {
+                yield return "struct";
+            }
+            else if (symbol.HasReferenceTypeConstraint)
             {
                 yield return symbol.ReferenceTypeConstraintNullableAnnotation == NullableAnnotation.Annotated
                     ? "class?"

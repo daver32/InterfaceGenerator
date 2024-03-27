@@ -145,6 +145,8 @@ namespace InterfaceGenerator
             var interfaceName = InferInterfaceName(implTypeSymbol, attributeData);
             var visibilityModifier = InferVisibilityModifier(implTypeSymbol, attributeData);
 
+            codeWriter.WriteLine("#nullable enable");
+            codeWriter.WriteLine();
             codeWriter.WriteLine("namespace {0}", namespaceName);
             codeWriter.WriteLine("{");
 

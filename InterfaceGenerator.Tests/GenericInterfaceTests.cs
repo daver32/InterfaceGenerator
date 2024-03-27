@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using FluentAssertions;
 using Xunit;
@@ -26,6 +27,16 @@ public class GenericInterfaceTests
         genericArgs[0].GetGenericParameterConstraints().Should().HaveCount(1).And.Contain(iEquatableOfTx);
 
         genericArgs[1].IsValueType.Should().BeTrue();
+    }
+
+    [Fact]
+    public void IsNullableEnabled()
+    {
+        typeof(IGenericInterfaceTestsService<,>).GetCustomAttributes()
+            .Select(ca => ca.TypeId)
+            .OfType<Type>()
+            .Should()
+            .ContainSingle(at => at.FullName == "System.Runtime.CompilerServices.NullableContextAttribute");
     }
 }
 
